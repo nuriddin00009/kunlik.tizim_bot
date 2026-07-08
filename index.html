@@ -2,119 +2,143 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>kunlik.tizim | Moliya Tizimi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>kunlik.tizim</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-    <!-- ============ NAVBAR ============ -->
-    <nav class="navbar">
+    <!-- ============ HEADER ============ -->
+    <header class="header">
         <div class="container">
-            <div class="nav-content">
+            <div class="header-content">
                 <div class="logo">
                     <span class="logo-icon">💰</span>
                     <span class="logo-text">kunlik.tizim</span>
                 </div>
-                <div class="nav-right">
-                    <span class="user-name" id="userName">👤 KALDAROV NURIDDIN</span>
+                <div class="header-right">
+                    <span class="user-badge">👤 KALDAROV N.</span>
                     <button class="theme-toggle" id="themeToggle">🌙</button>
                 </div>
             </div>
         </div>
-    </nav>
+    </header>
 
     <!-- ============ MAIN ============ -->
-    <main class="container">
+    <main class="main">
+        <div class="container">
 
-        <!-- STATS CARDS -->
-        <section class="stats-grid">
-            <div class="stat-card income">
-                <div class="stat-icon">💰</div>
-                <div class="stat-info">
-                    <h3>Jami Kirim</h3>
-                    <p class="stat-value" id="totalIncome">0 so'm</p>
+            <!-- STATS CARDS -->
+            <section class="stats-grid">
+                <div class="stat-card income">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-info">
+                        <p class="stat-label">Jami Kirim</p>
+                        <h2 class="stat-value" id="totalIncome">0 so'm</h2>
+                    </div>
                 </div>
-            </div>
-            <div class="stat-card expense">
-                <div class="stat-icon">💸</div>
-                <div class="stat-info">
-                    <h3>Jami Chiqim</h3>
-                    <p class="stat-value" id="totalExpense">0 so'm</p>
+                <div class="stat-card expense">
+                    <div class="stat-icon">📉</div>
+                    <div class="stat-info">
+                        <p class="stat-label">Jami Chiqim</p>
+                        <h2 class="stat-value" id="totalExpense">0 so'm</h2>
+                    </div>
                 </div>
-            </div>
-            <div class="stat-card balance">
-                <div class="stat-icon">📊</div>
-                <div class="stat-info">
-                    <h3>Balans</h3>
-                    <p class="stat-value" id="totalBalance">0 so'm</p>
+                <div class="stat-card balance">
+                    <div class="stat-icon">💳</div>
+                    <div class="stat-info">
+                        <p class="stat-label">Balans</p>
+                        <h2 class="stat-value" id="totalBalance">0 so'm</h2>
+                    </div>
                 </div>
-            </div>
-            <div class="stat-card growth">
-                <div class="stat-icon">📈</div>
-                <div class="stat-info">
-                    <h3>Oylik O'sish</h3>
-                    <p class="stat-value" id="totalGrowth">+0%</p>
+                <div class="stat-card growth">
+                    <div class="stat-icon">🚀</div>
+                    <div class="stat-info">
+                        <p class="stat-label">Oylik O'sish</p>
+                        <h2 class="stat-value" id="totalGrowth">+0%</h2>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- CHARTS -->
-        <section class="charts-grid">
-            <div class="chart-card">
-                <h3>📊 Kirim / Chiqim Grafigi</h3>
-                <canvas id="mainChart"></canvas>
-            </div>
-            <div class="chart-card">
-                <h3>🥧 Kategoriyalar</h3>
-                <canvas id="categoryChart"></canvas>
-            </div>
-        </section>
+            <!-- QUICK ACTIONS -->
+            <section class="quick-actions">
+                <button class="btn-quick income" onclick="openModal('kirim')">
+                    <span class="btn-icon">➕</span> Kirim
+                </button>
+                <button class="btn-quick expense" onclick="openModal('chiqim')">
+                    <span class="btn-icon">➖</span> Chiqim
+                </button>
+                <button class="btn-quick card" onclick="openCardModal()">
+                    <span class="btn-icon">💳</span> Karta
+                </button>
+                <button class="btn-quick report" onclick="generateReport()">
+                    <span class="btn-icon">📄</span> Hisobot
+                </button>
+            </section>
 
-        <!-- TRANSACTIONS -->
-        <section class="transactions-card">
-            <div class="transactions-header">
-                <h3>📋 So'nggi Tranzaksiyalar</h3>
-                <button class="btn-add" id="addBtn">➕ Yangi</button>
-            </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tur</th>
-                            <th>Summa</th>
-                            <th>Kategoriya</th>
-                            <th>Izoh</th>
-                            <th>Sana</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionsBody">
-                        <!-- Dinamik -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
+            <!-- CHARTS -->
+            <section class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>📊 Kirim / Chiqim</h3>
+                        <span class="chart-badge">30 kun</span>
+                    </div>
+                    <canvas id="mainChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>🥧 Kategoriyalar</h3>
+                        <span class="chart-badge">Oylik</span>
+                    </div>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </section>
 
-        <!-- QUICK ACTIONS -->
-        <section class="quick-actions">
-            <button class="btn-quick income" onclick="openModal('kirim')">💰 Kirim</button>
-            <button class="btn-quick expense" onclick="openModal('chiqim')">💸 Chiqim</button>
-            <button class="btn-quick card" onclick="openCardModal()">💳 Karta</button>
-            <button class="btn-quick report" onclick="generateReport()">📄 Hisobot</button>
-        </section>
+            <!-- TRANSACTIONS -->
+            <section class="transactions-card">
+                <div class="transactions-header">
+                    <h3>📋 So'nggi tranzaksiyalar</h3>
+                    <button class="btn-add" id="addBtn">➕ Yangi</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tur</th>
+                                <th>Summa</th>
+                                <th>Kategoriya</th>
+                                <th>Sana</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsBody">
+                            <!-- Dinamik -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
+            <!-- FOOTER -->
+            <footer class="footer">
+                <p>💰 kunlik.tizim — Moliya tizimingiz</p>
+                <p class="footer-bot">📱 @kunlik_tizimbot</p>
+            </footer>
+
+        </div>
     </main>
 
     <!-- ============ MODAL (Kirim/Chiqim) ============ -->
     <div class="modal" id="transactionModal">
         <div class="modal-content">
-            <span class="modal-close" onclick="closeModal()">&times;</span>
-            <h2 id="modalTitle">Yangi tranzaksiya</h2>
+            <div class="modal-header">
+                <h2 id="modalTitle">💰 Yangi tranzaksiya</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
             <form id="transactionForm">
                 <div class="form-group">
                     <label>💰 Summa (so'm)</label>
-                    <input type="number" id="amount" placeholder="Masalan: 1000000" required />
+                    <input type="number" id="amount" placeholder="0" required />
                 </div>
                 <div class="form-group">
                     <label>📂 Kategoriya</label>
@@ -143,10 +167,6 @@
                     <label>📝 Izoh</label>
                     <input type="text" id="description" placeholder="Izoh..." />
                 </div>
-                <div class="form-group">
-                    <label>📅 Sana</label>
-                    <input type="date" id="date" />
-                </div>
                 <button type="submit" class="btn-submit">✅ Saqlash</button>
             </form>
         </div>
@@ -155,15 +175,17 @@
     <!-- ============ MODAL (Karta) ============ -->
     <div class="modal" id="cardModal">
         <div class="modal-content">
-            <span class="modal-close" onclick="closeCardModal()">&times;</span>
-            <h2>💳 Yangi karta</h2>
+            <div class="modal-header">
+                <h2>💳 Yangi karta</h2>
+                <span class="modal-close" onclick="closeCardModal()">&times;</span>
+            </div>
             <form id="cardForm">
                 <div class="form-group">
                     <label>🏦 Karta nomi</label>
-                    <input type="text" id="cardName" placeholder="Masalan: Uzcard" required />
+                    <input type="text" id="cardName" placeholder="Uzcard / Visa" required />
                 </div>
                 <div class="form-group">
-                    <label>🔢 Karta raqami (16 ta)</label>
+                    <label>🔢 Karta raqami</label>
                     <input type="text" id="cardNumber" placeholder="8600 1234 5678 9012" maxlength="19" required />
                 </div>
                 <div class="form-group">
