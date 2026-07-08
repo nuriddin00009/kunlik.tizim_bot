@@ -1,36 +1,180 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <title>Moliya Monitoring</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; }
-        button { width: 100%; padding: 12px; margin: 5px 0; border: none; border-radius: 8px; color: white; cursor: pointer; }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>kunlik.tizim | Moliya Tizimi</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="card">
-        <h3>💰 Moliyaviy Operatsiyalar</h3>
-        <input type="number" id="amount" placeholder="Summani kiriting" style="width: 100%; padding: 10px;">
-        <button onclick="sendAction('kirim')" style="background: green;">Kirim (+)</button>
-        <button onclick="sendAction('chiqim')" style="background: red;">Chiqim (-)</button>
-        <button onclick="showHistory()" style="background: blue;">📊 Oxirgi operatsiyalar</button>
+
+    <!-- ============ NAVBAR ============ -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <span class="logo-icon">💰</span>
+                    <span class="logo-text">kunlik.tizim</span>
+                </div>
+                <div class="nav-right">
+                    <span class="user-name" id="userName">👤 KALDAROV NURIDDIN</span>
+                    <button class="theme-toggle" id="themeToggle">🌙</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============ MAIN ============ -->
+    <main class="container">
+
+        <!-- STATS CARDS -->
+        <section class="stats-grid">
+            <div class="stat-card income">
+                <div class="stat-icon">💰</div>
+                <div class="stat-info">
+                    <h3>Jami Kirim</h3>
+                    <p class="stat-value" id="totalIncome">0 so'm</p>
+                </div>
+            </div>
+            <div class="stat-card expense">
+                <div class="stat-icon">💸</div>
+                <div class="stat-info">
+                    <h3>Jami Chiqim</h3>
+                    <p class="stat-value" id="totalExpense">0 so'm</p>
+                </div>
+            </div>
+            <div class="stat-card balance">
+                <div class="stat-icon">📊</div>
+                <div class="stat-info">
+                    <h3>Balans</h3>
+                    <p class="stat-value" id="totalBalance">0 so'm</p>
+                </div>
+            </div>
+            <div class="stat-card growth">
+                <div class="stat-icon">📈</div>
+                <div class="stat-info">
+                    <h3>Oylik O'sish</h3>
+                    <p class="stat-value" id="totalGrowth">+0%</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHARTS -->
+        <section class="charts-grid">
+            <div class="chart-card">
+                <h3>📊 Kirim / Chiqim Grafigi</h3>
+                <canvas id="mainChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>🥧 Kategoriyalar</h3>
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </section>
+
+        <!-- TRANSACTIONS -->
+        <section class="transactions-card">
+            <div class="transactions-header">
+                <h3>📋 So'nggi Tranzaksiyalar</h3>
+                <button class="btn-add" id="addBtn">➕ Yangi</button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tur</th>
+                            <th>Summa</th>
+                            <th>Kategoriya</th>
+                            <th>Izoh</th>
+                            <th>Sana</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                        <!-- Dinamik -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- QUICK ACTIONS -->
+        <section class="quick-actions">
+            <button class="btn-quick income" onclick="openModal('kirim')">💰 Kirim</button>
+            <button class="btn-quick expense" onclick="openModal('chiqim')">💸 Chiqim</button>
+            <button class="btn-quick card" onclick="openCardModal()">💳 Karta</button>
+            <button class="btn-quick report" onclick="generateReport()">📄 Hisobot</button>
+        </section>
+
+    </main>
+
+    <!-- ============ MODAL (Kirim/Chiqim) ============ -->
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Yangi tranzaksiya</h2>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label>💰 Summa (so'm)</label>
+                    <input type="number" id="amount" placeholder="Masalan: 1000000" required />
+                </div>
+                <div class="form-group">
+                    <label>📂 Kategoriya</label>
+                    <select id="category" required>
+                        <optgroup label="Kirim">
+                            <option value="Oylik maosh">💰 Oylik maosh</option>
+                            <option value="Biznes daromad">📈 Biznes</option>
+                            <option value="Sovgʻa">🎁 Sovgʻa</option>
+                            <option value="Boshqa">📌 Boshqa</option>
+                        </optgroup>
+                        <optgroup label="Chiqim">
+                            <option value="Oziq-ovqat">🛒 Oziq-ovqat</option>
+                            <option value="Transport">🚕 Transport</option>
+                            <option value="Uy-joy">🏠 Uy-joy</option>
+                            <option value="Telefon">📱 Telefon</option>
+                            <option value="Kommunal">💡 Kommunal</option>
+                            <option value="Kiyim-kechak">👕 Kiyim</option>
+                            <option value="Salomatlik">💊 Salomatlik</option>
+                            <option value="Ta'lim">📚 Ta'lim</option>
+                            <option value="O'yin-kulgi">🎮 O'yin</option>
+                            <option value="Boshqa">📌 Boshqa</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>📝 Izoh</label>
+                    <input type="text" id="description" placeholder="Izoh..." />
+                </div>
+                <div class="form-group">
+                    <label>📅 Sana</label>
+                    <input type="date" id="date" />
+                </div>
+                <button type="submit" class="btn-submit">✅ Saqlash</button>
+            </form>
+        </div>
     </div>
 
-    <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
+    <!-- ============ MODAL (Karta) ============ -->
+    <div class="modal" id="cardModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeCardModal()">&times;</span>
+            <h2>💳 Yangi karta</h2>
+            <form id="cardForm">
+                <div class="form-group">
+                    <label>🏦 Karta nomi</label>
+                    <input type="text" id="cardName" placeholder="Masalan: Uzcard" required />
+                </div>
+                <div class="form-group">
+                    <label>🔢 Karta raqami (16 ta)</label>
+                    <input type="text" id="cardNumber" placeholder="8600 1234 5678 9012" maxlength="19" required />
+                </div>
+                <div class="form-group">
+                    <label>💰 Balans</label>
+                    <input type="number" id="cardBalance" placeholder="0" required />
+                </div>
+                <button type="submit" class="btn-submit">✅ Qo'shish</button>
+            </form>
+        </div>
+    </div>
 
-        function sendAction(type) {
-            let amount = document.getElementById('amount').value;
-            tg.sendData(JSON.stringify({action: "add_transaction", type: type, amount: amount}));
-        }
-
-        function showHistory() {
-            tg.sendData(JSON.stringify({action: "get_history"}));
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
